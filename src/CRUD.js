@@ -48,6 +48,8 @@ const CRUD = () => {
   const [message, setMessage] = useState("");
 
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const ValidateForm = () => {
@@ -71,15 +73,20 @@ const CRUD = () => {
   }, [fname, mname]);
 
   const getData = () => {
+    setLoading(true);
     axios
       .get("https://localhost:7078/api/Student")
       .then((result) => {
         setData(result.data);
+        setLoading(false);
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false);
       });
   };
+  if (loading) return <p>Loading...</p>;
+      if (error) return <p>Error: {error.message}</p>;
 
   const handleSave = () => {
     const url = "https://localhost:7078/api/Student";
@@ -283,6 +290,7 @@ const CRUD = () => {
       </Container>
       <br></br>
       <Table striped bordered hover>
+      
         <thead>
           <tr>
             <th>#</th>
