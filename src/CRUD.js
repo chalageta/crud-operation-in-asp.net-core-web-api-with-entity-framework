@@ -9,7 +9,7 @@ import { Form } from "react-bootstrap";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { Vortex } from "react-loader-spinner";
 const CRUD = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -48,17 +48,15 @@ const CRUD = () => {
   const [message, setMessage] = useState("");
 
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
+    let isValid = true;
     const ValidateForm = () => {
-      let isValid = true;
       if (fname.length <= 3) {
         setFnameError("First name is required");
         isValid = false;
       } else {
-        setFnameError(""); // Clear the error message if valid
+        setFnameError("");
       }
       if (mname.length <= 3) {
         setMnameError("middle name is required");
@@ -73,21 +71,15 @@ const CRUD = () => {
   }, [fname, mname]);
 
   const getData = () => {
-    setLoading(true);
     axios
       .get("https://localhost:7078/api/Student")
       .then((result) => {
         setData(result.data);
-        setLoading(false);
       })
       .catch((error) => {
-        console.log(error);
-        setLoading(false);
+        toast.error("Error fetching data:", error);
       });
   };
-  if (loading) return <p>Loading...</p>;
-      if (error) return <p>Error: {error.message}</p>;
-
   const handleSave = () => {
     const url = "https://localhost:7078/api/Student";
     const data = {
@@ -290,7 +282,6 @@ const CRUD = () => {
       </Container>
       <br></br>
       <Table striped bordered hover>
-      
         <thead>
           <tr>
             <th>#</th>
@@ -315,19 +306,19 @@ const CRUD = () => {
                   <td>{item.gender}</td>
                   <td>{item.email}</td>
                   <td>{item.phone}</td>
-                  <td colSpan={2}>
+                  <td>
                     <button
                       className="btn btn-primary"
                       onClick={() => handleEdit(item.id)}
                     >
                       Update
-                    </button>{" "}
+                    </button>
                     &nbsp;
                     <button
                       className="btn btn-danger"
                       onClick={() => handleDelete(item.id)}
                     >
-                      Dellete
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -335,7 +326,24 @@ const CRUD = () => {
             })
           ) : (
             <tr>
-              <td colSpan="8">Loading...</td>
+              <td colSpan={8}>
+                <Vortex
+                  visible={true}
+                  height="40"
+                  width="40"
+                  ariaLabel="vortex-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="vortex-wrapper"
+                  colors={[
+                    "red",
+                    "green",
+                    "blue",
+                    "yellow",
+                    "orange",
+                    "purple",
+                  ]}
+                />
+              </td>
             </tr>
           )}
         </tbody>
